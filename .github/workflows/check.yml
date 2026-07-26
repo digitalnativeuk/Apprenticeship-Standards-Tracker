@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "0 6 * * *"   # 06:00 UTC daily -- edit to change frequency
   workflow_dispatch: {}    # lets you trigger a run manually from the Actions tab
+  push:
+    branches: [master]
+    paths-ignore:
+      - "data/**"   # avoid re-triggering on the workflow's own automated commits
+      - "site/**"
 
 permissions:
   contents: write
