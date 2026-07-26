@@ -7,10 +7,19 @@ and served via GitHub Pages.
 import html
 import json
 import os
+import re
 from datetime import datetime, timezone
 
 SITE_DIR = "site"
 DATA_DIR = "data"
+
+# Matches the wording Skills England uses in the notice banner for standards
+# that aren't in their final/live state, e.g. "This apprenticeship is in
+# development ..." / "This apprenticeship is in revision ...".
+_PENDING_PATTERN = re.compile(
+    r"\bin (development|revision|review)\b|\bunder revision\b|\bbeing revised\b",
+    re.IGNORECASE,
+)
 
 CSS = """
 :root {
@@ -116,9 +125,18 @@ def build_site(results):
             changelog = json.load(f)
 
     cards_html = "".join(_render_card(r) for r in results)
+
     timeline_html = "".join(_render_timeline_entry(e) for e in changelog[:50])
     if not timeline_html:
         timeline_html = '<p class="empty-state">No changes detected yet.</p>'
+
+    pending_results = [
+        r for r in results
+        if "error" not in r and _PENDING_PATTERN.search(r["current"].get("notice_text") or "")
+    ]
+    pending_html = "".join(_render_pending_card(r) for r in pending_results)
+    if not pending_html:
+        pending_html = '<p class="empty-state">No standards currently flagged as in development or in revision.</p>'
 
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
@@ -136,11 +154,14 @@ def build_site(results):
   <p>Watching {len(results)} standard(s) on Skills England for status, version and date changes &middot; last checked {now}</p>
 </header>
 <main>
-  <h2 class="section-title">Current status</h2>
-  {cards_html}
-
   <h2 class="section-title">Change log</h2>
   {timeline_html}
+
+  <h2 class="section-title">Standards In Revision/Pending Updates</h2>
+  {pending_html}
+
+  <h2 class="section-title">Current status</h2>
+  {cards_html}
 </main>
 <footer>Internal tool &middot; source data from skillsengland.education.gov.uk (Open Government Licence)</footer>
 </body>
@@ -189,6 +210,38 @@ def _render_card(result):
       <h3><a href="{url}">{name}</a></h3>
       <div class="notice">{notice}</div>
       {table_html}
+    </div>
+    """
+
+
+def _top_version_row(version_log):
+    """First data row of the version log (the latest/upcoming entry), keyed
+    by its own column headers so column order in the source table doesn't
+    matter."""
+    if not version_log or len(version_log) < 2:
+        return None
+    header, first_row = version_log[0], version_log[1]
+    return dict(zip(header, first_row))
+
+
+def _render_pending_card(result):
+    ref = html.escape(result["reference"])
+    name = html.escape(result["name"])
+    url = html.escape(result["url"])
+
+    top = _top_version_row(result["current"].get("version_log")) or {}
+    version = html.escape(top.get("Version") or "—")
+    change_detail = html.escape(top.get("Change detail") or "—")
+    earliest = html.escape(top.get("Earliest start date") or "—")
+
+    return f"""
+    <div class="card">
+      <div class="ref">{ref}</div>
+      <h3><a href="{url}">{name}</a></h3>
+      <table class="version-log">
+        <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th></tr></thead>
+        <tbody><tr><td>{version}</td><td>{change_detail}</td><td>{earliest}</td></tr></tbody>
+      </table>
     </div>
     """
 
