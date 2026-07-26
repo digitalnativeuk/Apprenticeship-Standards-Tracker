@@ -228,36 +228,41 @@ def _render_card(result):
     """
 
 
+def _top_version_row(version_log):
+    """First data row of the version log (the latest/upcoming entry), keyed
+    by its own column headers so column order in the source table doesn't
+    matter."""
+    if not version_log or len(version_log) < 2:
+        return None
+    header, first_row = version_log[0], version_log[1]
+    return dict(zip(header, first_row))
+
+
 def _render_pending_table(pending_results):
     """Single table covering every standard flagged as in development/
-    revision, one row per version-log entry (keyed by that standard's own
-    column headers so column order in the source doesn't matter)."""
+    revision, one row per standard holding only its most recent version-log
+    entry (same row selection as the old per-block layout)."""
     rows_html = ""
     for result in pending_results:
         ref = html.escape(result["reference"])
         name = html.escape(format_title(result["name"]))
         url = html.escape(result["url"])
 
-        version_log = result["current"].get("version_log") or []
-        if len(version_log) < 2:
-            continue
-        header, *data_rows = version_log
-        for data_row in data_rows:
-            row = dict(zip(header, data_row))
-            version = html.escape(row.get("Version") or "—")
-            change_detail = html.escape(row.get("Change detail") or "—")
-            earliest = html.escape(row.get("Earliest start date") or "—")
-            latest = html.escape(row.get("Latest start date") or "—")
-            rows_html += f"""
-            <tr>
-              <td>{ref}</td>
-              <td><a href="{url}">{name}</a></td>
-              <td>{version}</td>
-              <td>{change_detail}</td>
-              <td>{earliest}</td>
-              <td>{latest}</td>
-            </tr>
-            """
+        top = _top_version_row(result["current"].get("version_log")) or {}
+        version = html.escape(top.get("Version") or "—")
+        change_detail = html.escape(top.get("Change detail") or "—")
+        earliest = html.escape(top.get("Earliest start date") or "—")
+        latest = html.escape(top.get("Latest start date") or "—")
+        rows_html += f"""
+        <tr>
+          <td>{ref}</td>
+          <td><a href="{url}">{name}</a></td>
+          <td>{version}</td>
+          <td>{change_detail}</td>
+          <td>{earliest}</td>
+          <td>{latest}</td>
+        </tr>
+        """
 
     if not rows_html:
         return ""
