@@ -21,6 +21,20 @@ _PENDING_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+
+def format_title(title):
+    """Title Case for display purposes only. Words that are already fully
+    upper-case in the source (acronyms like "HR", "L2") are left untouched;
+    everything else gets its first letter capitalised. Never use this on
+    text that feeds the diff engine or gets stored in snapshots -- only on
+    the rendered/display layer."""
+    if not title:
+        return title
+    return " ".join(
+        w if w.isupper() else w[:1].upper() + w[1:].lower()
+        for w in title.split(" ")
+    )
+
 CSS = """
 :root {
   --navy: #0b2340;
@@ -134,7 +148,7 @@ def build_site(results):
         r for r in results
         if "error" not in r and _PENDING_PATTERN.search(r["current"].get("notice_text") or "")
     ]
-    pending_html = "".join(_render_pending_card(r) for r in pending_results)
+    pending_html = _render_pending_table(pending_results)
     if not pending_html:
         pending_html = '<p class="empty-state">No standards currently flagged as in development or in revision.</p>'
 
@@ -173,7 +187,7 @@ def build_site(results):
 
 def _render_card(result):
     ref = html.escape(result["reference"])
-    name = html.escape(result["name"])
+    name = html.escape(format_title(result["name"]))
     url = html.escape(result["url"])
 
     if "error" in result:
@@ -214,42 +228,61 @@ def _render_card(result):
     """
 
 
-def _top_version_row(version_log):
-    """First data row of the version log (the latest/upcoming entry), keyed
-    by its own column headers so column order in the source table doesn't
-    matter."""
-    if not version_log or len(version_log) < 2:
-        return None
-    header, first_row = version_log[0], version_log[1]
-    return dict(zip(header, first_row))
+def _render_pending_table(pending_results):
+    """Single table covering every standard flagged as in development/
+    revision, one row per version-log entry (keyed by that standard's own
+    column headers so column order in the source doesn't matter)."""
+    rows_html = ""
+    for result in pending_results:
+        ref = html.escape(result["reference"])
+        name = html.escape(format_title(result["name"]))
+        url = html.escape(result["url"])
 
+        version_log = result["current"].get("version_log") or []
+        if len(version_log) < 2:
+            continue
+        header, *data_rows = version_log
+        for data_row in data_rows:
+            row = dict(zip(header, data_row))
+            version = html.escape(row.get("Version") or "—")
+            change_detail = html.escape(row.get("Change detail") or "—")
+            earliest = html.escape(row.get("Earliest start date") or "—")
+            latest = html.escape(row.get("Latest start date") or "—")
+            rows_html += f"""
+            <tr>
+              <td>{ref}</td>
+              <td><a href="{url}">{name}</a></td>
+              <td>{version}</td>
+              <td>{change_detail}</td>
+              <td>{earliest}</td>
+              <td>{latest}</td>
+            </tr>
+            """
 
-def _render_pending_card(result):
-    ref = html.escape(result["reference"])
-    name = html.escape(result["name"])
-    url = html.escape(result["url"])
-
-    top = _top_version_row(result["current"].get("version_log")) or {}
-    version = html.escape(top.get("Version") or "—")
-    change_detail = html.escape(top.get("Change detail") or "—")
-    earliest = html.escape(top.get("Earliest start date") or "—")
+    if not rows_html:
+        return ""
 
     return f"""
-    <div class="card">
-      <div class="ref">{ref}</div>
-      <h3><a href="{url}">{name}</a></h3>
-      <table class="version-log">
-        <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th></tr></thead>
-        <tbody><tr><td>{version}</td><td>{change_detail}</td><td>{earliest}</td></tr></tbody>
-      </table>
-    </div>
+    <table class="version-log">
+      <thead>
+        <tr>
+          <th>Standard Number</th>
+          <th>Standard Title</th>
+          <th>Version</th>
+          <th>Change detail</th>
+          <th>Earliest start date</th>
+          <th>Latest start date</th>
+        </tr>
+      </thead>
+      <tbody>{rows_html}</tbody>
+    </table>
     """
 
 
 def _render_timeline_entry(entry):
     ts = html.escape(entry["timestamp"])
     ref = html.escape(entry["reference"])
-    name = html.escape(entry["name"])
+    name = html.escape(format_title(entry["name"]))
     items = "".join(f"<li>{html.escape(c)}</li>" for c in entry["changes"])
     return f"""
     <div class="timeline-entry">
