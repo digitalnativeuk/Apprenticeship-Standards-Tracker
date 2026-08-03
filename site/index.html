@@ -67,6 +67,28 @@ h2.section-title {
   text-transform: uppercase;
 }
 .card h3 { margin: 0.15rem 0 0.5rem 0; font-size: 1.05rem; }
+/* Collapsible status cards: native <details>/<summary>, no JS needed.
+   Collapsed shows just the reference + title; the chevron rotates on open. */
+details.card > summary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+details.card > summary::-webkit-details-marker { display: none; }
+details.card > summary h3 { margin-bottom: 0; }
+details.card > summary .summary-heading { flex: 1 1 auto; min-width: 0; }
+details.card > summary .chevron {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid var(--slate);
+  border-bottom: 2px solid var(--slate);
+  transform: rotate(45deg);
+  transition: transform 0.15s ease;
+}
+details.card[open] > summary .chevron { transform: rotate(-135deg); }
 .card .notice {
   font-size: 0.9rem;
   color: var(--slate);
@@ -100,7 +122,7 @@ footer { text-align: center; font-size: 0.8rem; color: var(--slate); padding: 2r
 <body>
 <header class="masthead">
   <h1>Apprenticeship Standards Tracker</h1>
-  <p>Watching 14 standard(s) on Skills England for status, version and date changes &middot; last checked 2026-08-03 09:27 UTC</p>
+  <p>Watching 15 standard(s) on Skills England for status, version and date changes &middot; last checked 2026-08-03 21:26 UTC</p>
 </header>
 <main>
   <h2 class="section-title">Change log</h2>
@@ -117,6 +139,7 @@ footer { text-align: center; font-size: 0.8rem; color: var(--slate); padding: 2r
       <thead>
         <tr>
           <th>Standard Number</th>
+          <th>LARS Code</th>
           <th>Standard Title</th>
           <th>Version</th>
           <th>Change detail</th>
@@ -127,6 +150,7 @@ footer { text-align: center; font-size: 0.8rem; color: var(--slate); padding: 2r
       <tbody>
         <tr>
           <td>ST0135</td>
+          <td>430</td>
           <td><a href="https://skillsengland.education.gov.uk/apprenticeships/st0135">Early Years Educator</a></td>
           <td>Revised version awaiting implementation</td>
           <td>End point assessment plan revised</td>
@@ -136,6 +160,7 @@ footer { text-align: center; font-size: 0.8rem; color: var(--slate); padding: 2r
         
         <tr>
           <td>ST0070</td>
+          <td>196</td>
           <td><a href="https://skillsengland.education.gov.uk/apprenticeships/st0070">Business Administration</a></td>
           <td>1.0</td>
           <td>Approved for delivery</td>
@@ -145,6 +170,7 @@ footer { text-align: center; font-size: 0.8rem; color: var(--slate); padding: 2r
         
         <tr>
           <td>ST0270</td>
+          <td>518</td>
           <td><a href="https://skillsengland.education.gov.uk/apprenticeships/st0270">Roofer</a></td>
           <td>1.1</td>
           <td>End-point assessment plan and standard revised</td>
@@ -154,6 +180,7 @@ footer { text-align: center; font-size: 0.8rem; color: var(--slate); padding: 2r
         
         <tr>
           <td>ST0072</td>
+          <td>122</td>
           <td><a href="https://skillsengland.education.gov.uk/apprenticeships/st0072">Customer Service Practitioner</a></td>
           <td>1.1</td>
           <td>The funding band for this standard has been reviewed as part of the apprenticeship funding band review. The new funding band is £3500.</td>
@@ -162,7 +189,18 @@ footer { text-align: center; font-size: 0.8rem; color: var(--slate); padding: 2r
         </tr>
         
         <tr>
+          <td>ST0071</td>
+          <td>278</td>
+          <td><a href="https://skillsengland.education.gov.uk/apprenticeships/st0071">Customer Service Specialist</a></td>
+          <td>1.3</td>
+          <td>Updated SSA</td>
+          <td>10/12/2025</td>
+          <td>Not set</td>
+        </tr>
+        
+        <tr>
           <td>ST0770</td>
+          <td>616</td>
           <td><a href="https://skillsengland.education.gov.uk/apprenticeships/st0770">Sport Coach</a></td>
           <td>Revised version awaiting implementation</td>
           <td>Assessment plan revised</td>
@@ -175,9 +213,16 @@ footer { text-align: center; font-size: 0.8rem; color: var(--slate); padding: 2r
 
   <h2 class="section-title">Current status</h2>
   
-    <div class="card">
-      <div class="ref">ST1472</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st1472">Administration Assistant</a></h3>
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST1472</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st1472">Administration Assistant (838)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
       <div class="notice">The below assessment plan is approved by Skills England under the 2025/2026 apprenticeship assessment reforms. From 1 August 2026, government-funding of £4000 will be available for apprentices who, at the start of their apprenticeship training, are aged under 25. For further details of the changes to apprenticeship assessment, please refer to the Department for Education&#x27;s support guidance .</div>
       
         <table class="version-log">
@@ -185,26 +230,18 @@ footer { text-align: center; font-size: 0.8rem; color: var(--slate); padding: 2r
           <tbody><tr><td>2.0</td><td>Approved for delivery</td><td>01/08/2026</td><td>Not set</td></tr></tbody>
         </table>
         
-    </div>
+    </details>
     
-    <div class="card">
-      <div class="ref">ST0135</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0135">Early Years Educator</a></h3>
-      <div class="notice">This apprenticeship is in revision
-A revised version of this has been agreed and is available for information only at present. It will replace the version below for new starts from 1st November 2026 with a funding band of £7,000. Further details of this and other apprenticeships in revision are available in the revisions status report .
-This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.</div>
+    <details class="card">
       
-        <table class="version-log">
-          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
-          <tbody><tr><td>Revised version awaiting implementation</td><td>End point assessment plan revised</td><td>01/11/2026</td><td>Not set</td></tr><tr><td>1.5</td><td>Occupational standard revised - Clarification of professional recognition requirements.</td><td>12/06/2025</td><td>31/10/2026</td></tr><tr><td>1.4</td><td>End-point assessment plan revised. 
-Clarification - observation delivery</td><td>27/03/2025</td><td>11/06/2025</td></tr><tr><td>1.3</td><td>Occupational standard, end-point assessment plan and funding band revised.</td><td>01/04/2024</td><td>26/03/2025</td></tr><tr><td>1.2</td><td>Standard revised. Missing KSBs added to standard to align with EPA wording (14/12/20).</td><td>28/05/2020</td><td>31/03/2024</td></tr><tr><td>1.1</td><td>End-point assessment plan revised</td><td>10/04/2019</td><td>27/05/2020</td></tr><tr><td>1.0</td><td>Retired</td><td>03/04/2019</td><td>09/04/2019</td></tr></tbody>
-        </table>
-        
-    </div>
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0070</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0070">Business Administration (196)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
     
-    <div class="card">
-      <div class="ref">ST0070</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0070">Business Administration</a></h3>
       <div class="notice">This apprenticeship standard is in the process of being revised. In the meantime, the version below remains approved for delivery. Further details of this and other occupational standards in revision are available in the revisions status report .
 This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.
 Overview of the role
@@ -215,11 +252,201 @@ Supporting and engaging with different parts of the organisation and interact wi
           <tbody><tr><td>1.0</td><td>Approved for delivery</td><td>18/09/2017</td><td>Not set</td></tr></tbody>
         </table>
         
-    </div>
+    </details>
     
-    <div class="card">
-      <div class="ref">ST0270</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0270">Roofer</a></h3>
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0072</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0072">Customer Service Practitioner (122)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
+      <div class="notice">This apprenticeship is in the process of being revised. In the meantime, the version below remains approved for delivery. Further details of this and other occupational standards and apprenticeships in revision are available in the revisions status report.
+Overview of the role
+Providing customer service products and services for businesses and other organisations including face-to-face, telephone, digital and written contact and communications.</div>
+      
+        <table class="version-log">
+          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
+          <tbody><tr><td>1.1</td><td>The funding band for this standard has been reviewed as part of the apprenticeship funding band review. The new funding band is £3500.</td><td>03/10/2018</td><td>Not set</td></tr><tr><td>1.0</td><td>Retired</td><td>29/07/2016</td><td>02/10/2018</td></tr></tbody>
+        </table>
+        
+    </details>
+    
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0071</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0071">Customer Service Specialist (278)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
+      <div class="notice">This apprenticeship is in the process of being revised. In the meantime, the version below remains approved for delivery. Further details of this and other occupational standards and apprenticeships in revision are available in the revisions status report .
+This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.
+Overview of the role
+Dealing with customer queries, purchases and complaints.</div>
+      
+        <table class="version-log">
+          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
+          <tbody><tr><td>1.3</td><td>Updated SSA</td><td>10/12/2025</td><td>Not set</td></tr><tr><td>1.2</td><td>End-point assessment plan revised</td><td>09/12/2024</td><td>09/12/2025</td></tr><tr><td>1.1</td><td>End-point assessment plan revised</td><td>12/02/2024</td><td>08/12/2024</td></tr><tr><td>1.0</td><td>Approved for delivery</td><td>10/05/2018</td><td>11/02/2024</td></tr></tbody>
+        </table>
+        
+    </details>
+    
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0135</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0135">Early Years Educator (430)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
+      <div class="notice">This apprenticeship is in revision
+A revised version of this has been agreed and is available for information only at present. It will replace the version below for new starts from 1st November 2026 with a funding band of £7,000. Further details of this and other apprenticeships in revision are available in the revisions status report .
+This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.</div>
+      
+        <table class="version-log">
+          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
+          <tbody><tr><td>Revised version awaiting implementation</td><td>End point assessment plan revised</td><td>01/11/2026</td><td>Not set</td></tr><tr><td>1.5</td><td>Occupational standard revised - Clarification of professional recognition requirements.</td><td>12/06/2025</td><td>31/10/2026</td></tr><tr><td>1.4</td><td>End-point assessment plan revised. 
+Clarification - observation delivery</td><td>27/03/2025</td><td>11/06/2025</td></tr><tr><td>1.3</td><td>Occupational standard, end-point assessment plan and funding band revised.</td><td>01/04/2024</td><td>26/03/2025</td></tr><tr><td>1.2</td><td>Standard revised. Missing KSBs added to standard to align with EPA wording (14/12/20).</td><td>28/05/2020</td><td>31/03/2024</td></tr><tr><td>1.1</td><td>End-point assessment plan revised</td><td>10/04/2019</td><td>27/05/2020</td></tr><tr><td>1.0</td><td>Retired</td><td>03/04/2019</td><td>09/04/2019</td></tr></tbody>
+        </table>
+        
+    </details>
+    
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0551</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0551">Early Years Lead Practitioner (655)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
+      <div class="notice"></div>
+      
+        <table class="version-log">
+          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
+          <tbody><tr><td>1.1</td><td>Occupational standard, end-point assessment plan and funding band revised.</td><td>01/08/2025</td><td>Not set</td></tr><tr><td>1.0</td><td>Approved for delivery</td><td>10/08/2021</td><td>31/07/2025</td></tr></tbody>
+        </table>
+        
+    </details>
+    
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0888</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0888">Early Years Practitioner (550)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
+      <div class="notice">This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.</div>
+      
+        <table class="version-log">
+          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
+          <tbody><tr><td>1.1</td><td>Occupational standard, end-point assessment and funding band revised</td><td>01/08/2025</td><td>Not set</td></tr><tr><td>1.0</td><td>Approved for delivery</td><td>26/03/2020</td><td>31/07/2025</td></tr></tbody>
+        </table>
+        
+    </details>
+    
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0239</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0239">HR Support (191)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
+      <div class="notice">This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.
+Overview of the role
+Handling day to day queries and providing human resources advice ranging from recruitment through to retirement.</div>
+      
+        <table class="version-log">
+          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
+          <tbody><tr><td>1.1</td><td>The funding band for this standard has been reviewed as part of the apprenticeship funding band review. The new funding band is £4500</td><td>05/07/2019</td><td>Not set</td></tr><tr><td>1.0</td><td>Retired</td><td>25/08/2017</td><td>04/07/2019</td></tr></tbody>
+        </table>
+        
+    </details>
+    
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0385</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0385">Operations Manager (104)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
+      <div class="notice">This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.
+From 1st September 2026, this apprenticeship will not be government funded. Any apprentice who started this apprenticeship before 1st September 2026 will continue to be funded through to completion. This apprenticeship will remain available for delivery for privately funded apprentices.</div>
+      
+        <table class="version-log">
+          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
+          <tbody><tr><td>1.4</td><td>End point assessment revised</td><td>25/09/2024</td><td>Not set</td></tr><tr><td>1.3</td><td>Occupational standard, end-point assessment plan and funding band revised</td><td>19/09/2024</td><td>24/09/2024</td></tr><tr><td>1.2</td><td>End-point assessment plan revised</td><td>21/10/2020</td><td>18/09/2024</td></tr><tr><td>1.1</td><td>The funding band for this standard has been reviewed as part of the apprenticeship funding band review. The new funding band is £7000</td><td>04/03/2019</td><td>20/10/2020</td></tr><tr><td>1.0</td><td>Retired</td><td>01/06/2016</td><td>03/03/2019</td></tr></tbody>
+        </table>
+        
+    </details>
+    
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0238</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0238">People Professional (190)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
+      <div class="notice">This occupational standard is a revision of the L5 HR Consultant Partner and was renamed People Professional as part of the revision process. The People Professional was approved for delivery of new starts on 28th September 2023 and the HR Consultant Partner was retired for new starts on 27th September 2023 (there should not be any starts on the retired standard from that date). All individuals currently on the L5 HR Consultant Partner will complete this apprenticeship.
+This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.</div>
+      
+        <table class="version-log">
+          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
+          <tbody><tr><td>1.4</td><td>Updated SSA</td><td>08/12/2025</td><td>Not set</td></tr><tr><td>1.3</td><td>Occupational standard, end-point assessment plan and funding band revised.</td><td>28/09/2023</td><td>07/12/2025</td></tr><tr><td>1.2</td><td>Standard revised</td><td>07/03/2023</td><td>27/09/2023</td></tr><tr><td>1.1</td><td>The funding band for this standard has been reviewed as part of the apprenticeship funding band review. The new funding band is £7000. Typical duration changed from 36 months to 19 months on 30/05/2022</td><td>05/07/2019</td><td>06/03/2023</td></tr><tr><td>1.0</td><td>Approved for delivery</td><td>18/08/2017</td><td>04/07/2019</td></tr></tbody>
+        </table>
+        
+    </details>
+    
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST1421</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st1421">Recruiter (780)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
+      <div class="notice"></div>
+      
+        <table class="version-log">
+          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
+          <tbody><tr><td>1.0</td><td>Approved for delivery</td><td>20/08/2024</td><td>Not set</td></tr></tbody>
+        </table>
+        
+    </details>
+    
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0270</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0270">Roofer (518)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
       <div class="notice">This apprenticeship standard is in the process of being revised. In the meantime, the version below remains approved for delivery. Further details of this and other occupational standards in revision are available in the revisions status report .
 A temporary dispensation has been applied to the assessment plan version ST0270/AP01/V1.0 and ST0270/V1.1 for this apprenticeship. The dispensation will run indefinitely until all apprentices registered to ST0270/AP01/V1.0 and ST0270/V1.1 only, are complete. The dispensation may be withdrawn if no longer necessary. End-point assessment organisations (EPAOs) delivering EPAs for the apprenticeship will implement the dispensation as required, supported, and monitored by the relevant EQA provider.
 The key changes are:
@@ -232,113 +459,18 @@ Installing a range of roofing materials and products.</div>
           <tbody><tr><td>1.1</td><td>End-point assessment plan and standard revised</td><td>27/03/2023</td><td>Not set</td></tr><tr><td>1.0</td><td>Approved for delivery</td><td>30/09/2019</td><td>26/03/2023</td></tr></tbody>
         </table>
         
-    </div>
+    </details>
     
-    <div class="card">
-      <div class="ref">ST0888</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0888">Early Years Practitioner</a></h3>
-      <div class="notice">This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.</div>
+    <details class="card">
       
-        <table class="version-log">
-          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
-          <tbody><tr><td>1.1</td><td>Occupational standard, end-point assessment and funding band revised</td><td>01/08/2025</td><td>Not set</td></tr><tr><td>1.0</td><td>Approved for delivery</td><td>26/03/2020</td><td>31/07/2025</td></tr></tbody>
-        </table>
-        
-    </div>
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0770</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0770">Sport Coach (616)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
     
-    <div class="card">
-      <div class="ref">ST0551</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0551">Early Years Lead Practitioner</a></h3>
-      <div class="notice"></div>
-      
-        <table class="version-log">
-          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
-          <tbody><tr><td>1.1</td><td>Occupational standard, end-point assessment plan and funding band revised.</td><td>01/08/2025</td><td>Not set</td></tr><tr><td>1.0</td><td>Approved for delivery</td><td>10/08/2021</td><td>31/07/2025</td></tr></tbody>
-        </table>
-        
-    </div>
-    
-    <div class="card">
-      <div class="ref">ST0259</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0259">Supply Chain Warehouse Operative L2</a></h3>
-      <div class="notice"></div>
-      
-        <table class="version-log">
-          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
-          <tbody><tr><td>1.1</td><td>Occupational standard, end-point assessment plan and funding band revised</td><td>27/10/2023</td><td>Not set</td></tr><tr><td>1.0</td><td>Approved for delivery. The funding band for this standard has been reviewed and remains at £3000 (Dec-2018).</td><td>24/06/2016</td><td>26/10/2023</td></tr></tbody>
-        </table>
-        
-    </div>
-    
-    <div class="card">
-      <div class="ref">ST0072</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0072">Customer Service Practitioner</a></h3>
-      <div class="notice">This apprenticeship is in the process of being revised. In the meantime, the version below remains approved for delivery. Further details of this and other occupational standards and apprenticeships in revision are available in the revisions status report.
-Overview of the role
-Providing customer service products and services for businesses and other organisations including face-to-face, telephone, digital and written contact and communications.</div>
-      
-        <table class="version-log">
-          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
-          <tbody><tr><td>1.1</td><td>The funding band for this standard has been reviewed as part of the apprenticeship funding band review. The new funding band is £3500.</td><td>03/10/2018</td><td>Not set</td></tr><tr><td>1.0</td><td>Retired</td><td>29/07/2016</td><td>02/10/2018</td></tr></tbody>
-        </table>
-        
-    </div>
-    
-    <div class="card">
-      <div class="ref">ST0238</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0238">People Professional</a></h3>
-      <div class="notice">This occupational standard is a revision of the L5 HR Consultant Partner and was renamed People Professional as part of the revision process. The People Professional was approved for delivery of new starts on 28th September 2023 and the HR Consultant Partner was retired for new starts on 27th September 2023 (there should not be any starts on the retired standard from that date). All individuals currently on the L5 HR Consultant Partner will complete this apprenticeship.
-This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.</div>
-      
-        <table class="version-log">
-          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
-          <tbody><tr><td>1.4</td><td>Updated SSA</td><td>08/12/2025</td><td>Not set</td></tr><tr><td>1.3</td><td>Occupational standard, end-point assessment plan and funding band revised.</td><td>28/09/2023</td><td>07/12/2025</td></tr><tr><td>1.2</td><td>Standard revised</td><td>07/03/2023</td><td>27/09/2023</td></tr><tr><td>1.1</td><td>The funding band for this standard has been reviewed as part of the apprenticeship funding band review. The new funding band is £7000. Typical duration changed from 36 months to 19 months on 30/05/2022</td><td>05/07/2019</td><td>06/03/2023</td></tr><tr><td>1.0</td><td>Approved for delivery</td><td>18/08/2017</td><td>04/07/2019</td></tr></tbody>
-        </table>
-        
-    </div>
-    
-    <div class="card">
-      <div class="ref">ST0385</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0385">Operations Manager</a></h3>
-      <div class="notice">This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.
-From 1st September 2026, this apprenticeship will not be government funded. Any apprentice who started this apprenticeship before 1st September 2026 will continue to be funded through to completion. This apprenticeship will remain available for delivery for privately funded apprentices.</div>
-      
-        <table class="version-log">
-          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
-          <tbody><tr><td>1.4</td><td>End point assessment revised</td><td>25/09/2024</td><td>Not set</td></tr><tr><td>1.3</td><td>Occupational standard, end-point assessment plan and funding band revised</td><td>19/09/2024</td><td>24/09/2024</td></tr><tr><td>1.2</td><td>End-point assessment plan revised</td><td>21/10/2020</td><td>18/09/2024</td></tr><tr><td>1.1</td><td>The funding band for this standard has been reviewed as part of the apprenticeship funding band review. The new funding band is £7000</td><td>04/03/2019</td><td>20/10/2020</td></tr><tr><td>1.0</td><td>Retired</td><td>01/06/2016</td><td>03/03/2019</td></tr></tbody>
-        </table>
-        
-    </div>
-    
-    <div class="card">
-      <div class="ref">ST0239</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0239">HR Support</a></h3>
-      <div class="notice">This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.
-Overview of the role
-Handling day to day queries and providing human resources advice ranging from recruitment through to retirement.</div>
-      
-        <table class="version-log">
-          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
-          <tbody><tr><td>1.1</td><td>The funding band for this standard has been reviewed as part of the apprenticeship funding band review. The new funding band is £4500</td><td>05/07/2019</td><td>Not set</td></tr><tr><td>1.0</td><td>Retired</td><td>25/08/2017</td><td>04/07/2019</td></tr></tbody>
-        </table>
-        
-    </div>
-    
-    <div class="card">
-      <div class="ref">ST1421</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st1421">Recruiter</a></h3>
-      <div class="notice"></div>
-      
-        <table class="version-log">
-          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
-          <tbody><tr><td>1.0</td><td>Approved for delivery</td><td>20/08/2024</td><td>Not set</td></tr></tbody>
-        </table>
-        
-    </div>
-    
-    <div class="card">
-      <div class="ref">ST0770</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0770">Sport Coach</a></h3>
       <div class="notice">This apprenticeship is in revision
 A revised version of the assessment plan is approved by Skills England under the 2025/2026 apprenticeship assessment reforms and is available for information only. On 14 January 2027, it will replace the current version for new starts, allowing providers and employers to begin working with assessment organisations to deliver the assessment. Until then, the current end-point assessment remains in place. Further details of this and other apprenticeships in revision are available in the revisions and adjustments status report .</div>
       
@@ -347,11 +479,37 @@ A revised version of the assessment plan is approved by Skills England under the
           <tbody><tr><td>Revised version awaiting implementation</td><td>Assessment plan revised</td><td>14/01/2027</td><td>Not set</td></tr><tr><td>1.3</td><td>End-point assessment plan revised. Re-sit or Re-take section page 25 updated with more details.</td><td>22/08/2024</td><td>13/01/2027</td></tr><tr><td>1.2</td><td>Occupational standard and end-point assessment plan revised</td><td>27/11/2023</td><td>21/08/2024</td></tr><tr><td>1.1</td><td>End-point assessment revised</td><td>17/11/2022</td><td>26/11/2023</td></tr><tr><td>1.0</td><td>Approved for delivery</td><td>15/02/2021</td><td>16/11/2022</td></tr></tbody>
         </table>
         
-    </div>
+    </details>
     
-    <div class="card">
-      <div class="ref">ST0454</div>
-      <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0454">Teaching Assistant</a></h3>
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0259</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0259">Supply Chain Warehouse Operative L2 (111)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
+      <div class="notice"></div>
+      
+        <table class="version-log">
+          <thead><tr><th>Version</th><th>Change detail</th><th>Earliest start date</th><th>Latest start date</th></tr></thead>
+          <tbody><tr><td>1.1</td><td>Occupational standard, end-point assessment plan and funding band revised</td><td>27/10/2023</td><td>Not set</td></tr><tr><td>1.0</td><td>Approved for delivery. The funding band for this standard has been reviewed and remains at £3000 (Dec-2018).</td><td>24/06/2016</td><td>26/10/2023</td></tr></tbody>
+        </table>
+        
+    </details>
+    
+    <details class="card">
+      
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">ST0454</div>
+          <h3><a href="https://skillsengland.education.gov.uk/apprenticeships/st0454">Teaching Assistant (297)</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    
       <div class="notice">This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.</div>
       
         <table class="version-log">
@@ -359,7 +517,7 @@ A revised version of the assessment plan is approved by Skills England under the
           <tbody><tr><td>1.1</td><td>Standard, end-point assessment plan and funding have been revised</td><td>06/05/2023</td><td>Not set</td></tr><tr><td>1.0</td><td>Approved for delivery</td><td>26/06/2018</td><td>05/05/2023</td></tr></tbody>
         </table>
         
-    </div>
+    </details>
     
 </main>
 <footer>Internal tool &middot; source data from skillsengland.education.gov.uk (Open Government Licence)</footer>
