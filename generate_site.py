@@ -22,6 +22,12 @@ _PENDING_PATTERN = re.compile(
 )
 
 
+def lars_code(result):
+    """The scraped LARS code for a standard, or None if it doesn't have one
+    (or the page couldn't be fetched)."""
+    return (result.get("current") or {}).get("lars_code") or None
+
+
 def format_title(title):
     """Title Case for display purposes only. Words that are already fully
     upper-case in the source (acronyms like "HR", "L2") are left untouched;
@@ -98,6 +104,28 @@ h2.section-title {
   text-transform: uppercase;
 }
 .card h3 { margin: 0.15rem 0 0.5rem 0; font-size: 1.05rem; }
+/* Collapsible status cards: native <details>/<summary>, no JS needed.
+   Collapsed shows just the reference + title; the chevron rotates on open. */
+details.card > summary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+details.card > summary::-webkit-details-marker { display: none; }
+details.card > summary h3 { margin-bottom: 0; }
+details.card > summary .summary-heading { flex: 1 1 auto; min-width: 0; }
+details.card > summary .chevron {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid var(--slate);
+  border-bottom: 2px solid var(--slate);
+  transform: rotate(45deg);
+  transition: transform 0.15s ease;
+}
+details.card[open] > summary .chevron { transform: rotate(-135deg); }
 .card .notice {
   font-size: 0.9rem;
   color: var(--slate);
@@ -138,7 +166,10 @@ def build_site(results):
         with open(changelog_path, "r", encoding="utf-8") as f:
             changelog = json.load(f)
 
-    cards_html = "".join(_render_card(r) for r in results)
+    # Status cards read alphabetically by title; the pending table below
+    # keeps the configured standards.json order.
+    status_results = sorted(results, key=lambda r: format_title(r["name"]).casefold())
+    cards_html = "".join(_render_card(r) for r in status_results)
 
     timeline_html = "".join(_render_timeline_entry(e) for e in changelog[:50])
     if not timeline_html:
@@ -185,18 +216,33 @@ def build_site(results):
         f.write(page)
 
 
+def _card_summary(ref, url, name):
+    """The always-visible part of a collapsed status card: reference and
+    linked title only, plus the expand/collapse chevron."""
+    return f"""
+      <summary>
+        <div class="summary-heading">
+          <div class="ref">{ref}</div>
+          <h3><a href="{url}">{name}</a></h3>
+        </div>
+        <span class="chevron" aria-hidden="true"></span>
+      </summary>
+    """
+
+
 def _render_card(result):
     ref = html.escape(result["reference"])
-    name = html.escape(format_title(result["name"]))
+    lars = lars_code(result) or "No LARS Code Available"
+    name = html.escape(f"{format_title(result['name'])} ({lars})")
     url = html.escape(result["url"])
+    summary_html = _card_summary(ref, url, name)
 
     if "error" in result:
         return f"""
-        <div class="card">
-          <div class="ref">{ref}</div>
-          <h3><a href="{url}">{name}</a></h3>
+        <details class="card">
+          {summary_html}
           <p class="notice">Could not fetch this page on the last check: {html.escape(result['error'])}</p>
-        </div>
+        </details>
         """
 
     current = result["current"]
@@ -219,12 +265,11 @@ def _render_card(result):
         """
 
     return f"""
-    <div class="card">
-      <div class="ref">{ref}</div>
-      <h3><a href="{url}">{name}</a></h3>
+    <details class="card">
+      {summary_html}
       <div class="notice">{notice}</div>
       {table_html}
-    </div>
+    </details>
     """
 
 
@@ -245,6 +290,7 @@ def _render_pending_table(pending_results):
     rows_html = ""
     for result in pending_results:
         ref = html.escape(result["reference"])
+        lars = html.escape(lars_code(result) or "Not Available")
         name = html.escape(format_title(result["name"]))
         url = html.escape(result["url"])
 
@@ -256,6 +302,7 @@ def _render_pending_table(pending_results):
         rows_html += f"""
         <tr>
           <td>{ref}</td>
+          <td>{lars}</td>
           <td><a href="{url}">{name}</a></td>
           <td>{version}</td>
           <td>{change_detail}</td>
@@ -272,6 +319,7 @@ def _render_pending_table(pending_results):
       <thead>
         <tr>
           <th>Standard Number</th>
+          <th>LARS Code</th>
           <th>Standard Title</th>
           <th>Version</th>
           <th>Change detail</th>

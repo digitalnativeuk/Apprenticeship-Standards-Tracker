@@ -9,6 +9,7 @@ Extracts the metadata-level fields that matter for spotting changes:
     HTML class)
   - the "Version log" table (version, change detail, earliest/latest start
     dates)
+  - the LARS code
   - the trailblazer contact email
 
 This is built against the GOV.UK Design System structure the site uses.
@@ -42,6 +43,7 @@ def parse_standard(html_text: str, url: str) -> dict:
     title = _get_title(soup)
     notice_text = _get_notice_text(soup)
     version_log = _get_version_log(soup)
+    lars_code = _get_lars_code(soup)
     contact_email = _get_trailblazer_email(soup)
 
     return {
@@ -50,6 +52,7 @@ def parse_standard(html_text: str, url: str) -> dict:
         "notice_text": notice_text,
         "notice_hash": _hash(notice_text),
         "version_log": version_log,
+        "lars_code": lars_code,
         "trailblazer_email": contact_email,
     }
 
@@ -118,6 +121,27 @@ def _get_version_log(soup):
         if cells:
             rows.append(cells)
     return rows
+
+
+_LARS_LINK_PATTERN = re.compile(r"find-epao[^\"']*?/courses/(\d+)")
+
+
+def _get_lars_code(soup):
+    """The LARS code, as a string, or None if the standard doesn't have one
+    yet (brand-new standards not approved for delivery).
+
+    The "Key information" panel that displays 'Lars code' to a human is
+    rendered client-side, so it isn't in the HTML we fetch. The code is
+    still present server-side in the 'find an assessment organisation'
+    link, which points at find-epao ... /courses/<lars>/... -- spot-checked
+    against the rendered panel for several standards. If that link ever
+    stops carrying it, this returns None and the site shows the
+    'not available' wording rather than a wrong number."""
+    for anchor in soup.find_all("a", href=True):
+        match = _LARS_LINK_PATTERN.search(anchor["href"])
+        if match:
+            return match.group(1)
+    return None
 
 
 def _get_trailblazer_email(soup):
