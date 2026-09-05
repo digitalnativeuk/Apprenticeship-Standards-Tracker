@@ -1,5 +1,13 @@
 [
   {
+    "timestamp": "2026-09-05T09:42+00:00",
+    "reference": "ST0385",
+    "name": "Operations manager",
+    "changes": [
+      "Status/notice text changed on the page (banner, revision note, date, or guidance wording) -- check the standard's page for detail."
+    ]
+  },
+  {
     "timestamp": "2026-08-01T08:06+00:00",
     "reference": "ST1472",
     "name": "Administration assistant",
