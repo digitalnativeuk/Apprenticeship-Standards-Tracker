@@ -1,8 +1,8 @@
 {
   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0239",
   "title": "HR support",
-  "notice_text": "This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.\nOverview of the role\nHandling day to day queries and providing human resources advice ranging from recruitment through to retirement.",
-  "notice_hash": "7425c67290fd275463715f65dc3f1602ff4e538cbd83a7a3e0a2e760c22d2da9",
+  "notice_text": "This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.\nA revised version of the assessment plan is approved by Skills England under the 2025/2026 apprenticeship assessment reforms and is available for information only. On 11 march 2027, it will replace the current version for new starts, allowing providers and employers to begin working with assessment organisations to deliver the assessment. Until then, the current end-point assessment remains in place. Further details of this and other apprenticeships in revision are available in the revisions and adjustments status report .\nThis apprenticeship is in revision\nOverview of the role\nHandling day to day queries and providing human resources advice ranging from recruitment through to retirement.",
+  "notice_hash": "0ab95fb834bd5ce5ec0909933a0706e6287876c55f6ce6bb7208ae2a599f7b55",
   "version_log": [
     [
       "Version",
@@ -11,10 +11,16 @@
       "Latest start date"
     ],
     [
+      "Revised version awaiting implementation",
+      "Occupational standard and assessment plan revised",
+      "11/03/2027",
+      "Not set"
+    ],
+    [
       "1.1",
       "The funding band for this standard has been reviewed as part of the apprenticeship funding band review. The new funding band is £4500",
       "05/07/2019",
-      "Not set"
+      "10/03/2027"
     ],
     [
       "1.0",

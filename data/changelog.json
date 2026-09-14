@@ -1,5 +1,15 @@
 [
   {
+    "timestamp": "2026-09-14T11:20+00:00",
+    "reference": "ST0239",
+    "name": "HR Support",
+    "changes": [
+      "Status/notice text changed on the page (banner, revision note, date, or guidance wording) -- check the standard's page for detail.",
+      "Version log entry added/changed: Revised version awaiting implementation | Occupational standard and assessment plan revised | 11/03/2027 | Not set",
+      "Version log entry added/changed: 1.1 | The funding band for this standard has been reviewed as part of the apprenticeship funding band review. The new funding band is £4500 | 05/07/2019 | 10/03/2027"
+    ]
+  },
+  {
     "timestamp": "2026-09-05T09:42+00:00",
     "reference": "ST0385",
     "name": "Operations manager",
