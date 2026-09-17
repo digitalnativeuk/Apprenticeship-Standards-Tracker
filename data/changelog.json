@@ -1,5 +1,37 @@
 [
   {
+    "timestamp": "2026-09-17T10:43+00:00",
+    "reference": "ST0454",
+    "name": "Teaching assistant",
+    "changes": [
+      "Trailblazer contact changed: karen.raby@education.gov.uk -> None"
+    ]
+  },
+  {
+    "timestamp": "2026-09-17T10:42+00:00",
+    "reference": "ST0239",
+    "name": "HR Support",
+    "changes": [
+      "Trailblazer contact changed: Enquiries.IFA@education.gov.uk -> None"
+    ]
+  },
+  {
+    "timestamp": "2026-09-17T10:42+00:00",
+    "reference": "ST0135",
+    "name": "Early years educator",
+    "changes": [
+      "Trailblazer contact changed: karen.raby@education.gov.uk -> None"
+    ]
+  },
+  {
+    "timestamp": "2026-09-17T10:42+00:00",
+    "reference": "ST1472",
+    "name": "Administration assistant",
+    "changes": [
+      "Trailblazer contact changed: kirsty.WOOLLASTON@education.gov.uk -> None"
+    ]
+  },
+  {
     "timestamp": "2026-09-14T11:20+00:00",
     "reference": "ST0239",
     "name": "HR Support",
