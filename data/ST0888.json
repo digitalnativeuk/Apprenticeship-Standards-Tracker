@@ -1,8 +1,8 @@
 {
   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0888",
   "title": "Early years practitioner",
-  "notice_text": "This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.",
-  "notice_hash": "27d4f9a418dacca5d065dae114a3eb4ccee77ebc922ff2f1e2aaa5a8c431502b",
+  "notice_text": "This apprenticeship is in revision\nThis standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.\nA revised version of the assessment plan is approved by Skills England under the 2025/2026 apprenticeship assessment reforms and is available for information only. On 01 April 2027, it will replace the current version for new starts, allowing providers and employers to begin working with assessment organisations to deliver the assessment. Until then, the current end-point assessment remains in place. Further details of this and other apprenticeships in revision are available in the revisions and adjustments status report .",
+  "notice_hash": "34b96db3b5152983da7698bcaabebc8837906565192b08ede354d49be8ee1ca9",
   "version_log": [
     [
       "Version",
@@ -11,10 +11,16 @@
       "Latest start date"
     ],
     [
+      "Revised version awaiting implementation",
+      "Occupational standard and assessment plan revised",
+      "01/04/2027",
+      "Not set"
+    ],
+    [
       "1.1",
       "Occupational standard, end-point assessment and funding band revised",
       "01/08/2025",
-      "Not set"
+      "31/03/2027"
     ],
     [
       "1.0",
