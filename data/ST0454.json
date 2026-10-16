@@ -1,8 +1,8 @@
 {
   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0454",
   "title": "Teaching assistant",
-  "notice_text": "This standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.",
-  "notice_hash": "27d4f9a418dacca5d065dae114a3eb4ccee77ebc922ff2f1e2aaa5a8c431502b",
+  "notice_text": "This apprenticeship is in revision\nThis standard included a transition arrangement for the minimum off‑the‑job training requirement for learners starting between 1 August and 31 December 2025.\nA revised version of the assessment plan is approved by Skills England under the 2025/2026 apprenticeship assessment reforms and is available for information only. On 13 April 2027, it will replace the current version for new starts, allowing providers and employers to start working with assessment organisations to deliver the assessment. Until then, the current end-point assessment remains in place. Further details of this and other apprenticeships in revision are available in the revisions and adjustments status report .",
+  "notice_hash": "cd0d2ccab0a61c860d091947a9f183b2addd6323b57cb54cdf2e076e3749b1d9",
   "version_log": [
     [
       "Version",
@@ -11,10 +11,16 @@
       "Latest start date"
     ],
     [
+      "Revised version awaiting implementation",
+      "Assessment plan revised",
+      "13/04/2027",
+      "Not set"
+    ],
+    [
       "1.1",
       "Standard, end-point assessment plan and funding have been revised",
       "06/05/2023",
-      "Not set"
+      "12/04/2027"
     ],
     [
       "1.0",
