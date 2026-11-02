@@ -101,7 +101,8 @@ def _status_event(previous, current, old, new):
         version = next(v for v in new if v.lower().startswith(_PENDING_LABEL))
         _, start, detail = start_of(version)
         when = f"new version starts {fmt_date(start)}" if start else "start date not yet set"
-        return {"text": f"{was} → revision pending: {when}{detail}", "effective": start}
+        lead = "New version announced" if was == BEING_REVISED else "Now in revision"
+        return {"text": f"{lead}: {when}{detail}", "effective": start}
 
     if now == APPROVED:
         added = [v for v in new if v not in old and v]
@@ -111,6 +112,9 @@ def _status_event(previous, current, old, new):
         lead = "Revision complete" if was in (BEING_REVISED, REVISION_PENDING) else "Approved for delivery"
         arrow = f"{was} → approved" if was == IN_DEVELOPMENT else lead
         return {"text": f"{arrow}: {when}{detail}", "effective": start}
+
+    if now == BEING_REVISED:
+        return {"text": "Now in revision: new version not yet published", "effective": None}
 
     return {"text": f"{was} → {now.lower()}", "effective": None}
 
