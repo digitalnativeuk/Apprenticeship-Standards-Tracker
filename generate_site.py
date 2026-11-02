@@ -13,13 +13,38 @@ from datetime import datetime, timezone
 SITE_DIR = "site"
 DATA_DIR = "data"
 
-# Matches the wording Skills England uses in the notice banner for standards
-# that aren't in their final/live state, e.g. "This apprenticeship is in
-# development ..." / "This apprenticeship is in revision ...".
-_PENDING_PATTERN = re.compile(
-    r"\bin (development|revision|review)\b|\bunder revision\b|\bbeing revised\b",
-    re.IGNORECASE,
-)
+# A standard belongs in the backlog table only if something is actually
+# pending: a version-log row that is still awaiting implementation or has a
+# start date in the future, or a banner saying it is in development. The old
+# check matched any "in revision"/"being revised" wording anywhere in the
+# notice (including boilerplate links), which flagged most standards.
+_IN_DEVELOPMENT_PATTERN = re.compile(r"in development", re.IGNORECASE)
+
+
+def _parse_date(text):
+    try:
+        return datetime.strptime((text or "").strip(), "%d/%m/%Y").date()
+    except ValueError:
+        return None
+
+
+def is_pending(result, today=None):
+    """True if the standard has an upcoming/unreleased change."""
+    if "error" in result:
+        return False
+    today = today or datetime.now(timezone.utc).date()
+    current = result["current"]
+    if _IN_DEVELOPMENT_PATTERN.search(current.get("notice_text") or ""):
+        return True
+    version_log = current.get("version_log") or []
+    for row in version_log[1:]:
+        entry = dict(zip(version_log[0], row))
+        if "awaiting implementation" in (entry.get("Version") or "").lower():
+            return True
+        start = _parse_date(entry.get("Earliest start date"))
+        if start and start > today:
+            return True
+    return False
 
 
 def lars_code(result):
@@ -175,10 +200,7 @@ def build_site(results):
     if not timeline_html:
         timeline_html = '<p class="empty-state">No changes detected yet.</p>'
 
-    pending_results = [
-        r for r in results
-        if "error" not in r and _PENDING_PATTERN.search(r["current"].get("notice_text") or "")
-    ]
+    pending_results = [r for r in results if is_pending(r)]
     pending_html = _render_pending_table(pending_results)
     if not pending_html:
         pending_html = '<p class="empty-state">No standards currently flagged as in development or in revision.</p>'

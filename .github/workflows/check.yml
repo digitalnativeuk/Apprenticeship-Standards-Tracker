@@ -2,7 +2,12 @@ name: Check apprenticeship standards
 
 on:
   schedule:
-    - cron: "0 6 * * *"   # 06:00 UTC daily -- edit to change frequency
+    # Standards go live at 00:01 UK time. 23:07 UTC is just after midnight
+    # in BST, 00:07 UTC just after midnight in GMT; 06:07 and 12:07 are
+    # catch-ups because GitHub delays scheduled runs (often by hours).
+    # Odd minutes avoid the top-of-hour queue.
+    - cron: "7 23 * * *"
+    - cron: "7 0,6,12 * * *"
   workflow_dispatch: {}    # lets you trigger a run manually from the Actions tab
   push:
     branches: [master]
