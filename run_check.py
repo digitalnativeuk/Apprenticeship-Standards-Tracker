@@ -8,9 +8,11 @@ Or on a schedule via .github/workflows/check.yml
 import json
 import sys
 import time
+from datetime import datetime, timezone
 
 from scraper import fetch_standard
 from diff_engine import load_previous, save_snapshot, compare, append_changelog
+from events import derive_events, append_events
 from generate_site import build_site
 
 
@@ -43,6 +45,8 @@ def main():
         elif changes:
             print(f"  {len(changes)} change(s) detected")
             append_changelog(reference, name, changes)
+            append_events(reference, name, derive_events(previous, current),
+                          datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M"))
             any_changes = True
         else:
             print("  no change")

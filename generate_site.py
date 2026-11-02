@@ -10,6 +10,8 @@ import os
 import re
 from datetime import datetime, timezone
 
+from events import load_events, parse_date, fmt_date
+
 SITE_DIR = "site"
 DATA_DIR = "data"
 
@@ -45,17 +47,6 @@ def is_pending(result, today=None):
         if start and start > today:
             return True
     return False
-
-
-def is_meaningful_entry(entry):
-    """A change-log entry is worth showing if it records a version-log or
-    title change. Entries that are only a contact-email change or a vague
-    "notice text changed" are noise; they stay in data/changelog.json but
-    are not rendered."""
-    return any(
-        c.startswith(("Version log entry", "Title changed"))
-        for c in entry.get("changes", [])
-    )
 
 
 def lars_code(result):
@@ -188,6 +179,9 @@ table.version-log th, table.version-log td {
 }
 .timeline-entry time { font-family: var(--mono); font-size: 0.75rem; color: var(--slate); }
 .timeline-entry ul { margin: 0.35rem 0 0 0; padding-left: 1.1rem; }
+.timeline-entry .timing { font-size: 0.8rem; color: var(--accent); }
+.timeline-entry .ref { font-family: var(--mono); font-size: 0.75rem; color: var(--slate); }
+details.older > summary { cursor: pointer; color: var(--slate); margin: 0.5rem 0 1rem; }
 .empty-state { color: var(--slate); font-style: italic; }
 footer { text-align: center; font-size: 0.8rem; color: var(--slate); padding: 2rem 0; }
 """
@@ -196,22 +190,12 @@ footer { text-align: center; font-size: 0.8rem; color: var(--slate); padding: 2r
 def build_site(results):
     os.makedirs(SITE_DIR, exist_ok=True)
 
-    changelog = []
-    changelog_path = os.path.join(DATA_DIR, "changelog.json")
-    if os.path.exists(changelog_path):
-        with open(changelog_path, "r", encoding="utf-8") as f:
-            changelog = json.load(f)
-
     # Status cards read alphabetically by title; the pending table below
     # keeps the configured standards.json order.
     status_results = sorted(results, key=lambda r: format_title(r["name"]).casefold())
     cards_html = "".join(_render_card(r) for r in status_results)
 
-    timeline_html = "".join(
-        _render_timeline_entry(e) for e in [e for e in changelog if is_meaningful_entry(e)][:50]
-    )
-    if not timeline_html:
-        timeline_html = '<p class="empty-state">No changes detected yet.</p>'
+    timeline_html = _render_change_log(load_events())
 
     pending_results = [r for r in results if is_pending(r)]
     pending_html = _render_pending_table(pending_results)
@@ -367,14 +351,63 @@ def _render_pending_table(pending_results):
     """
 
 
-def _render_timeline_entry(entry):
-    ts = html.escape(entry["timestamp"])
-    ref = html.escape(entry["reference"])
-    name = html.escape(format_title(entry["name"]))
-    items = "".join(f"<li>{html.escape(c)}</li>" for c in entry["changes"])
+def _group_by_run(events):
+    """Events from the same standard noticed in the same check, newest first."""
+    groups = {}
+    for ev in events:
+        groups.setdefault((ev["reference"], ev["run"]), []).append(ev)
+    return sorted(groups.values(), key=lambda g: g[0]["run"], reverse=True)
+
+
+def _timing_note(group):
+    """How far ahead of (or behind) its effective date the change was noticed.
+    Uses the earliest effective date in the group."""
+    noticed = parse_date(datetime.strptime(group[0]["run"], "%Y-%m-%dT%H:%M").strftime("%d/%m/%Y"))
+    dates = [parse_date(ev["effective"]) for ev in group if ev.get("effective")]
+    dates = [d for d in dates if d]
+    if not dates:
+        return ""
+    days = (min(dates) - noticed).days
+    if days > 0:
+        return f"{days} day{'s' if days != 1 else ''} notice"
+    if days == 0:
+        return "noticed on the day"
+    return f"noticed {-days} day{'s' if days != -1 else ''} after"
+
+
+def _render_group(group):
+    first = group[0]
+    noticed = datetime.strptime(first["run"], "%Y-%m-%dT%H:%M")
+    date = f"{noticed.day} {noticed:%b %Y}"
+    ref = html.escape(first["reference"])
+    name = html.escape(format_title(first["name"]))
+    note = _timing_note(group)
+    note_html = f' <span class="timing">&middot; {html.escape(note)}</span>' if note else ""
+    items = "".join(f"<li>{html.escape(ev['text'])}</li>" for ev in group)
     return f"""
     <div class="timeline-entry">
-      <time>{ts}</time> &middot; <strong>{ref} &mdash; {name}</strong>
+      <time>{date}</time> &middot; <strong>{name}</strong> <span class="ref">{ref}</span>{note_html}
       <ul>{items}</ul>
     </div>
     """
+
+
+def _render_change_log(events):
+    """Latest set of changes per standard is shown; anything it superseded
+    moves into an "Earlier changes" fold so the trail stays visible."""
+    groups = _group_by_run(events)
+    seen, current, older = set(), [], []
+    for g in groups:
+        ref = g[0]["reference"]
+        (older if ref in seen else current).append(g)
+        seen.add(ref)
+    if not current:
+        return '<p class="empty-state">No changes detected yet.</p>'
+    html_out = "".join(_render_group(g) for g in current)
+    if older:
+        html_out += (
+            f'<details class="older"><summary>Earlier changes ({len(older)})</summary>'
+            + "".join(_render_group(g) for g in older)
+            + "</details>"
+        )
+    return html_out
