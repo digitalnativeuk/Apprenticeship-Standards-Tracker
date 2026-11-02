@@ -47,6 +47,17 @@ def is_pending(result, today=None):
     return False
 
 
+def is_meaningful_entry(entry):
+    """A change-log entry is worth showing if it records a version-log or
+    title change. Entries that are only a contact-email change or a vague
+    "notice text changed" are noise; they stay in data/changelog.json but
+    are not rendered."""
+    return any(
+        c.startswith(("Version log entry", "Title changed"))
+        for c in entry.get("changes", [])
+    )
+
+
 def lars_code(result):
     """The scraped LARS code for a standard, or None if it doesn't have one
     (or the page couldn't be fetched)."""
@@ -196,7 +207,9 @@ def build_site(results):
     status_results = sorted(results, key=lambda r: format_title(r["name"]).casefold())
     cards_html = "".join(_render_card(r) for r in status_results)
 
-    timeline_html = "".join(_render_timeline_entry(e) for e in changelog[:50])
+    timeline_html = "".join(
+        _render_timeline_entry(e) for e in [e for e in changelog if is_meaningful_entry(e)][:50]
+    )
     if not timeline_html:
         timeline_html = '<p class="empty-state">No changes detected yet.</p>'
 
