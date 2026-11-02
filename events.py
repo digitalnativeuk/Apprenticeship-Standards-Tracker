@@ -12,6 +12,7 @@ The raw text diffs in data/changelog.json are left alone as an audit trail.
 """
 import json
 import os
+import re
 from datetime import datetime
 
 EVENTS_PATH = os.path.join("data", "events.json")
@@ -42,6 +43,39 @@ def fmt_date(text):
     return f"{d.day} {d:%b %Y}" if d else text
 
 
+_IN_DEVELOPMENT = re.compile(r"(?<![A-Za-z])in development(?![A-Za-z])", re.IGNORECASE)
+_BEING_REVISED = re.compile(
+    r"in the process of being revised|apprenticeship (standard )?is (in|under) revision",
+    re.IGNORECASE,
+)
+
+IN_DEVELOPMENT = "In development"
+APPROVED = "Approved"
+BEING_REVISED = "Being revised"
+REVISION_PENDING = "Revision pending"
+
+
+def status_of(record):
+    """Where the standard is in its life cycle, worked out from the page:
+    in development (no approved version yet), approved, being revised (a
+    revision is under way but no new version is listed), or revision pending
+    (a revised version is listed, awaiting its start date). None if the
+    record is missing or has no recognisable state."""
+    if not record:
+        return None
+    notice = record.get("notice_text") or ""
+    rows = _rows(record)
+    if _IN_DEVELOPMENT.search(notice):
+        return IN_DEVELOPMENT
+    if any(v.lower().startswith(_PENDING_LABEL) for v in rows):
+        return REVISION_PENDING
+    if _BEING_REVISED.search(notice):
+        return BEING_REVISED
+    if any(v for v in rows):
+        return APPROVED
+    return None
+
+
 def _label(version):
     if version.lower().startswith(_PENDING_LABEL):
         return "Revised version"
@@ -51,6 +85,34 @@ def _label(version):
 def _short_detail(row):
     detail = (row.get("Change detail") or "").strip().rstrip(".")
     return f" ({detail})" if detail and len(detail) <= 70 else ""
+
+
+def _status_event(previous, current, old, new):
+    was, now = status_of(previous), status_of(current)
+    if was == now or not was or not now:
+        return None
+
+    def start_of(version):
+        row = new.get(version) or {}
+        start = row.get("Earliest start date")
+        return (version, start if _is_set(start) else None, _short_detail(row))
+
+    if now == REVISION_PENDING:
+        version = next(v for v in new if v.lower().startswith(_PENDING_LABEL))
+        _, start, detail = start_of(version)
+        when = f"new version starts {fmt_date(start)}" if start else "start date not yet set"
+        return {"text": f"{was} → revision pending: {when}{detail}", "effective": start}
+
+    if now == APPROVED:
+        added = [v for v in new if v not in old and v]
+        version = added[0] if added else next(v for v in new if v)
+        _, start, detail = start_of(version)
+        when = f"version {version} starts {fmt_date(start)}" if start else f"version {version}, start date not yet set"
+        lead = "Revision complete" if was in (BEING_REVISED, REVISION_PENDING) else "Approved for delivery"
+        arrow = f"{was} → approved" if was == IN_DEVELOPMENT else lead
+        return {"text": f"{arrow}: {when}{detail}", "effective": start}
+
+    return {"text": f"{was} → {now.lower()}", "effective": None}
 
 
 def derive_events(previous, current):
@@ -67,12 +129,17 @@ def derive_events(previous, current):
         })
 
     old, new = _rows(previous), _rows(current)
+    status_event = _status_event(previous, current, old, new)
+    if status_event:
+        events.append(status_event)
     pending_gone = [v for v in old if v.lower().startswith(_PENDING_LABEL) and v not in new]
     added_numbered = [v for v in new if v not in old and not v.lower().startswith(_PENDING_LABEL)]
 
     for version, row in new.items():
         start, end = row.get("Earliest start date"), row.get("Latest start date")
         if version not in old:
+            if status_event:
+                continue  # already covered by the status headline
             if version.lower().startswith(_PENDING_LABEL):
                 when = f"starts {fmt_date(start)}" if _is_set(start) else "start date not yet set"
                 events.append({"text": f"Revised version announced: {when}{_short_detail(row)}",
@@ -103,7 +170,7 @@ def derive_events(previous, current):
                 text = f"{label}: {phrase} removed (was {fmt_date(was)})"
             events.append({"text": text, "effective": now if _is_set(now) else None})
 
-    if pending_gone and not added_numbered:
+    if pending_gone and not added_numbered and not status_event:
         events.append({"text": "Pending revised version no longer listed", "effective": None})
 
     return events

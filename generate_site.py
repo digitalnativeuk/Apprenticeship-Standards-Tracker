@@ -20,7 +20,7 @@ DATA_DIR = "data"
 # start date in the future, or a banner saying it is in development. The old
 # check matched any "in revision"/"being revised" wording anywhere in the
 # notice (including boilerplate links), which flagged most standards.
-_IN_DEVELOPMENT_PATTERN = re.compile(r"in development", re.IGNORECASE)
+_IN_DEVELOPMENT_PATTERN = re.compile(r"(?<![A-Za-z])in development(?![A-Za-z])", re.IGNORECASE)
 
 
 def _parse_date(text):
